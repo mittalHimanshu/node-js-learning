@@ -1,20 +1,24 @@
-const express = require('express')
-const app = express()
-const routes = require('./routes')
-var mongoose = require('mongoose')
-const {mongoURI} = require('./config/keys')
-var bodyParser = require('body-parser')
-const session = require('express-session');
-module.exports.MongoStore = require('connect-mongo')(session);
+const express = require("express");
+const app = express();
+const routes = require("./routes");
+var mongoose = require("mongoose");
+const { mongoURI } = require("./config/keys");
+var bodyParser = require("body-parser");
+const session = require("express-session");
+module.exports.MongoStore = require("connect-mongo")(session);
 
 mongoose.connect(mongoURI, { useNewUrlParser: true }).then(
-    () => { console.log('connected successfully') },
-    err => { console.log(err) }
-)
+  () => {
+    console.log("connected successfully");
+  },
+  err => {
+    console.log(err);
+  }
+);
 
-app.use(session(require('./config/session')))
+app.use(session(require("./config/session")));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use('/', routes)
+app.use("/", routes);
 
-app.listen(5000)
+app.listen(5000, console.log("server started"));
