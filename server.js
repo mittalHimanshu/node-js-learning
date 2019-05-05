@@ -5,6 +5,8 @@ var mongoose = require("mongoose");
 const { mongoURI } = require("./config/keys");
 var bodyParser = require("body-parser");
 const session = require("express-session");
+var https = require("https");
+var fs = require("fs");
 module.exports.MongoStore = require("connect-mongo")(session);
 
 mongoose.connect(mongoURI, { useNewUrlParser: true }).then(
@@ -16,9 +18,16 @@ mongoose.connect(mongoURI, { useNewUrlParser: true }).then(
   }
 );
 
+var options = {
+  key: fs.readFileSync("./ssl/cert.key"),
+  cert: fs.readFileSync("./ssl/cert.pem"),
+  requestCert: false,
+  rejectUnauthorized: false
+};
+
 app.use(session(require("./config/session")));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/", routes);
 
-app.listen(5000, console.log("server started"));
+https.createServer(options, app).listen(5000);
